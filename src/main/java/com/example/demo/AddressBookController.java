@@ -21,9 +21,11 @@ public class AddressBookController {
 
     @GetMapping("/index")
     public String index(Model model) {
-        var it = repository.findAll();
-        var ab = new ArrayList<AddressBook>();
-        it.forEach(e -> ab.add(e));
+        Iterable<AddressBook> it = repository.findAll();
+        ArrayList<AddressBook> ab = new ArrayList<AddressBook>();
+        for(AddressBook e: it){
+            ab.add(e);
+        }
         model.addAttribute(ab);
         return "addresbooks";
     }
