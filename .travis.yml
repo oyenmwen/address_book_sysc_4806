@@ -7,3 +7,5 @@ deploy:
   app: address-book-sysc-app
   on:
     all_branches: true
+  skip_cleanup: true
+
