@@ -3,5 +3,6 @@ before_install:
   - chmod +x mvnw
 deploy:
   provider: heroku
-  api-key: $HEROKU_API_KEY
+  api-key:
+    secured: $HEROKU_API_KEY
   app: address-book-sysc-app
