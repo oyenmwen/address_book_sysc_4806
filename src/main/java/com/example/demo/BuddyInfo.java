@@ -12,16 +12,18 @@ public class BuddyInfo {
 
     private String name;
     private String number;
+
+
+
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name="addressBook_ID")
     private AddressBook addressBook;
 
     protected BuddyInfo() {}
 
-    public BuddyInfo(String name, String number, AddressBook addressBook) {
+    public BuddyInfo(String name, String number) {
         this.name = name;
         this.number = number;
-        this.addressBook = addressBook;
     }
 
     public long getId() {
@@ -30,6 +32,10 @@ public class BuddyInfo {
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    public void setAddressBook(AddressBook addressBook) {
+        this.addressBook = addressBook;
     }
 
     public String getName() {
@@ -50,7 +56,7 @@ public class BuddyInfo {
 
     @Override
     public String toString() {
-        return "BuddyInfo: {" + ",\n"+
+        return "BuddyInfo: {" + "\n"+
                 "   id: " + id + ",\n"+
                 "   name: '" + this.getName() + '\'' + ",\n"+
                 "   number: '" + this.getNumber() + '\'' + ",\n"+
@@ -59,7 +65,7 @@ public class BuddyInfo {
 
     public static void main(String[] args) {
         AddressBook b = new AddressBook();
-        BuddyInfo a = new BuddyInfo("bob","383838",b);
+        BuddyInfo a = new BuddyInfo("bob","383838");
 //        a.addBuddies(new BuddyInfo("bernice","0987656",a));
 //        a.addBuddies(new BuddyInfo("osowolo","123456",a));
         System.out.println(a);

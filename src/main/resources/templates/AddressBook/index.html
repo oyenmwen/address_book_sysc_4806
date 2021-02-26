@@ -8,9 +8,16 @@
 <body>
 
 <div class=" container pt-5 mt-5">
-<h1>Welcome to AddressBook World!</h1>
-    <a href="/index" class="btn btn-lg btn-secondary"> View all Address Books</a>
-<a href="/create" class="btn btn-lg btn-primary"> Create a new Address Book</a>
+    <h1>Address Books:</h1>
+    <br>
+    <div th:each="addressBook : ${ab}" >
+        <a th:href="'/' + ${addressBook.getId()}">
+            <h4 th:text="${addressBook}"></h4>
+        </a>
+        <br>
+    </div>
+</h2>
+    <a href="/create" class="btn btn-lg btn-primary"> Create a new Address Book</a>
 </div>
 
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>

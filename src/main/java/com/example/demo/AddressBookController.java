@@ -3,8 +3,7 @@ package com.example.demo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 
@@ -26,8 +25,8 @@ public class AddressBookController {
         for(AddressBook e: it){
             ab.add(e);
         }
-        model.addAttribute(ab);
-        return "addresbooks";
+        model.addAttribute("ab",ab);
+        return "AddressBook/index";
     }
 
     @GetMapping("/create")
@@ -35,33 +34,45 @@ public class AddressBookController {
         AddressBook addressBook = new AddressBook();
         repository.save(addressBook);
         model.addAttribute(addressBook);
-        return "create";
+        return "AddressBook/new";
     }
 
-//    @GetMapping("/{id}/buddies")
-//    public List<BuddyInfo> get(@PathVariable String id) {
-//
-//        Long abId = Long.parseLong(id);
-//        Optional<AddressBook> ab = repository.findById(abId);
-//
-//        if(ab.isPresent()){
-//            return ab.get().getBuddies();
-//        }
-//        return null;
-//    }
+    @GetMapping("/{id}")
+    public String showAddressBook(@PathVariable String id, Model model) {
+        AddressBook addressBook = repository.findById(Long.parseLong(id));
+        model.addAttribute(addressBook);
+        return "AddressBook/show";
+    }
 
-//    @PostMapping ("/{id}/create")
-//    public List<BuddyInfo> createBuddy(@PathVariable String id) {
-//
-//        Long abId = Long.parseLong(id);
-//        Optional<AddressBook> ab = repository.findById(abId);
-//
-//        if(ab.isPresent()){
-//            return ab.get().getBuddies();
-//        }
-//        return null;
-//    }
 
+    @GetMapping("/{id}/new")
+    public String newBuddyForm(@PathVariable String id, Model model) {
+        model.addAttribute("buddy", new BuddyInfo());
+        model.addAttribute("id",id);
+        return "BuddyInfo/new";
+    }
+
+    @PostMapping("/new")
+    public String newBuddySubmit(@RequestParam(name = "id") String id, @ModelAttribute BuddyInfo buddy, Model model) {
+        AddressBook addressBook = repository.findById(Long.parseLong(id));
+        addressBook.addBuddies(buddy);
+        repository.save(addressBook);
+        model.addAttribute("buddy", buddy);
+        model.addAttribute(addressBook);
+        return "BuddyInfo/show";
+    }
+
+    @GetMapping("/{id}/{buddyId}")
+    public String showBuddy(@PathVariable String id, @PathVariable String buddyId,  Model model) {
+        AddressBook addressBook = repository.findById(Long.parseLong(id));
+        for(BuddyInfo b: addressBook.getBuddies()){
+            if(b.getId() == Long.parseLong(buddyId)){
+                model.addAttribute("buddy",b);
+            }
+        }
+        model.addAttribute("addressBook",addressBook);
+        return "BuddyInfo/show";
+    }
 
 
 

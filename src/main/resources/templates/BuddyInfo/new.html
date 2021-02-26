@@ -8,9 +8,21 @@
 <body>
 
 <div class=" container pt-5 mt-5">
-    <h1>AddressBook Successfully Created! ✅</h1>
-    <h2 th:text="'The AddressBook ID is  ' + ${addressBook.getId()}" />
-    <a href="/" class="btn btn-lg btn-success"> Go Home</a>
+<h1>Create a new Buddy</h1>
+
+    <form action="#" th:action="@{/new}" th:object="${buddy}" method="post">
+        <div class="form-group">
+            <label for="name">Buddy Name</label>
+            <input type="text" class="form-control" id="name" th:field="*{name}" placeholder="e.g. John Doe">
+        </div>
+        <div class="form-group">
+            <label for="number">Buddy Number</label>
+            <input type="text" class="form-control" id="number" th:field="*{number}" placeholder="e.g. 555-555-5555">
+        </div>
+        <input name="id" type="text" th:value="${id}" hidden>
+
+        <button type="submit" class="btn btn-lg btn-primary"> Create a new Buddy</button>
+    </form>
 </div>
 
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
