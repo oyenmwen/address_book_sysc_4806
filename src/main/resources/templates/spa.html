@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Welcome to AddressBook World</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css"
+          integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
+</head>
+<body>
+
+<div class=" container pt-5 mt-5" id="main">
+    <h1>Welcome to AddressBook World!</h1>
+    <a href="#" id="index" class="btn btn-lg btn-secondary"> View all Address Books</a>
+    <a href="#" id="create" class="btn btn-lg btn-primary"> Create a new Address Book</a>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.js" integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc=" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-Piv4xVNRyMGpqkS2by6br4gNJ7DXjqk09RmUpJ8jgGtD7zP9yug3goQfGII0yAns"
+        crossorigin="anonymous"></script>
+<script>
+    $(document).ready(() => {
+        $(document).on("click", "#create", () => {
+            $.ajax({type: 'GET',
+                dataType: 'json',
+                url: "/json/create",
+                success: (data, requestStatus, xhrObject)=>{
+                console.log(data);
+                    $("#main").remove();
+                    $("body").append(`
+                            <div class=" container pt-5 mt-5" id="main">
+           <h1>AddressBook Successfully Created! ✅</h1>
+        <h2>The AddressBook ID is ${data.id}<h2/>
+         <a data-id="${data.id}" id="newBuddy" class="btn btn-lg btn-primary"> Create a new Buddy</a>
+         <a href="#" class="btn btn-lg btn-success" id="home"> Go Home</a>
+                        </div>
+                            `);
+                }
+            });
+        });
+
+
+        $(document).on("click", "#index", () => {
+
+            console.log($(this).attr('href'));
+            $.ajax({type: 'GET',
+                dataType: 'json',
+                url: "/json/index",
+                success: (data, requestStatus, xhrObject)=>{
+
+                    $("#main").remove();
+                    let html = `
+                            <div class=" container pt-5 mt-5" id="main">
+                            <h1>Address Books:</h1>
+                            <br>`;
+                    data.forEach(e=>{
+                            html += `
+                                <div>
+                       <a  href="#" class="showAddressBook" data-id="${e.id}">
+                     <h4>${JSON.stringify(e)}</h4>
+                    </a>
+                                </div>
+                            `;
+                    });
+                    $("body").append(html + `
+                    <br>
+                <a href="#" id="create" class="btn btn-lg btn-primary">
+                Create a new Address Book
+                </a>
+                </div>
+                `);
+                }
+            });
+        });
+
+
+        $(document).on("click", "#home", () => {
+            $("#main").remove();
+            $("body").append(`<div class=" container pt-5 mt-5" id="main">
+    <h1>Welcome to AddressBook World!</h1>
+    <a href="#" id="index" class="btn btn-lg btn-secondary"> View all Address Books</a>
+    <a href="#" id="create" class="btn btn-lg btn-primary"> Create a new Address Book</a>
+</div>
+`);
+        });
+
+        $(document).on("click", "#newBuddy", () => {
+            $("#main").remove();
+            $("body").append(`
+<div class=" container pt-5 mt-5" id="#main">
+<h1>Create a new Buddy</h1>
+
+    <form action="#" method="post">
+        <div class="form-group">
+            <label for="name">Buddy Name</label>
+            <input type="text" class="form-control" id="name" name="name" placeholder="e.g. John Doe">
+        </div>
+        <div class="form-group">
+            <label for="number">Buddy Number</label>
+            <input type="text" class="form-control" id="number" name="number" placeholder="e.g. 555-555-5555">
+        </div>
+        <input name="id" type="text" value="${$(this).data('id')}" hidden>
+
+        <button type="submit" id="submit" class="btn btn-lg btn-primary"> Create a new Buddy</button>
+    </form>
+</div>
+
+`);
+        });
+
+        // this is the id of the form
+        $("#submit").submit(function(e) {
+
+            e.preventDefault(); // avoid to execute the actual submit of the form.
+
+            let form = $(this);
+
+            $.ajax({
+                type: "POST",
+                url: "localhost:8080/spa/json/new",
+                data: form.serialize(), // serializes the form's elements.
+                success: function(data)
+                {
+                    $("#main").remove();
+                    $("body").append(showBuddy(data));
+                }
+            });
+
+        });
+
+        function showBuddy(data){
+            let html = `<div class=" container pt-5 mt-5" id="main">
+                    <h1>The Buddy ID ${data.id}<h1/>
+                    <h2>Name: ${data.name}<h2/>
+                    <h2>Number:${data.number} <h2/>
+
+                    <a href="#" class="showAddressBook" data-id="${data.addressBook.id}"  class="btn btn-lg btn-primary">Return to Address Book</a>
+                    <a href="#" id="home" class="btn btn-lg btn-success"> Go Home</a>
+                </div>`
+
+            return html;
+        }
+
+        $(document).on("click", ".showAddressBook", () => {
+            const id = $(this).data("id");
+            $.ajax({type: 'GET',
+                dataType: 'json',
+                url: "/json/" + id,
+                success: (data, requestStatus, xhrObject)=>{
+            $("#main").remove();
+            let html = `<div class=" container pt-5 mt-5" id="main">
+            <h2>AddressBook ID ${data.id} <h2/>
+             <br>
+            <h2>Buddies:</h2>
+             <br>`;
+                    data.forEach(e=>{
+                    html += `
+                                <div>
+                       <a  href="#" id="showBuddy" data-id="${b.id}">
+                     <h4>${JSON.stringify(b)}</h4>
+                    </a>
+                                </div>
+                            `;
+                    html += ` <a data-id="${data.id}" href="#" id="newBuddy"  class="btn btn-lg btn-primary"> Create a new Buddy</a>
+    <a href="#" class="btn btn-lg btn-success" id="home"> Go Home</a>
+</div>`;
+                    $("body").append(html);
+
+        });
+        }
+        });
+        });
+
+        $(document).on("click", "#showBuddy", () => {
+            $("#main").remove();
+            $("body").append(showBuddy());
+        });
+
+
+    });
+
+
+</script>
+
+
+</body>
+</html>
